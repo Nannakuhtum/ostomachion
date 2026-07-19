@@ -32,4 +32,4 @@
 
 - [x] 5.1 Full suite green: `npm run check`, `npm test`; manually solve on desktop and mobile viewport (reference solution) to confirm end-to-end win
 - [x] 5.2 Reduced-motion pass: drag, rotate, win moment all collapse correctly
-- [ ] 5.3 Commit, push, confirm deploy green and live site playable
+- [x] 5.3 Commit, push, confirm deploy green and live site playable
