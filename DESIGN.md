@@ -16,14 +16,15 @@ All OKLCH. No pure black or white anywhere; every neutral is tinted toward the c
 |---|---|---|
 | Stone (page ground) | `oklch(0.94 0.012 80)` | Page background; warm limestone |
 | Ink | `oklch(0.26 0.02 50)` | Text, outlines; black-glaze, never #000 |
-| Terracotta (board) | `oklch(0.64 0.13 45)` | Board field, primary actions |
+| Terracotta | `oklch(0.64 0.13 45)` | Piece fill (accent set), primary actions |
 | Terracotta deep | `oklch(0.5 0.13 40)` | Hover/active, board border |
 | Cream slip | `oklch(0.9 0.035 85)` | Piece fill (light set), raised surfaces |
 | Ochre | `oklch(0.72 0.11 75)` | Piece fill (mid set) |
-| Umber | `oklch(0.42 0.06 55)` | Piece fill (dark set) |
+| Umber | `oklch(0.42 0.06 55)` | Secondary text accents (too close to the clay well for piece fills) |
+| Clay well (board) | `oklch(0.33 0.045 45)` | Board field: a dark recessed well, deliberately outside the piece-fill range so the board never reads as a piece |
 | Laurel | `oklch(0.55 0.06 130)` | Success: valid snap, solved state, collection count |
 
-Piece coloring: pieces draw from the cream/ochre/umber/terracotta family so the solved board reads as one ceramic object. Piece identity never depends on hue alone; each piece also carries its ink outline and subtle per-piece surface grain (SVG noise/texture at low opacity).
+Piece coloring: pieces draw from the cream/ochre/terracotta family (all ≥0.5 lightness, clearly above the clay well) so the solved board reads as one ceramic object. Piece identity never depends on hue alone; each piece also carries its ink outline and subtle per-piece surface grain (SVG noise/texture at low opacity).
 
 ## Typography
 
@@ -42,7 +43,7 @@ Piece coloring: pieces draw from the cream/ochre/umber/terracotta family so the 
 
 ## Components
 
-- **Board**: SVG, subtle stone texture, hairline lattice hint only while dragging (fades in), ink border.
+- **Board**: SVG, a dark clay well the pieces sit *in*: clay-well fill, faint light grain, gradient inner shadow (strong top, soft left/right, hairline light catch at the bottom lip), hairline cream lattice hint only while dragging (fades in), ink rim border.
 - **Piece**: SVG polygon, ceramic fill + grain, ink outline (1.5px), soft drop shadow that grows while dragged (lifted off the surface).
 - **Rotation knob**: small circular handle offset outside the selected piece; drag to free-rotate, ghost preview of snap orientation at ~30% opacity.
 - **Flip control**: labeled button near the knob. Both affordances visible on selection, no hidden gestures.

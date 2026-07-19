@@ -143,7 +143,7 @@
       <feColorMatrix
         in="noise"
         type="matrix"
-        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.04 0"
+        values="0 0 0 0 0.92  0 0 0 0 0.86  0 0 0 0 0.78  0 0 0 0.025 0"
         result="tinted"
       />
       <feComposite in="tinted" in2="SourceAlpha" operator="in" result="clipped" />
@@ -152,6 +152,22 @@
         <feMergeNode in="clipped" />
       </feMerge>
     </filter>
+    <linearGradient id="well-shade-top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0.4" />
+      <stop offset="1" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="well-shade-left" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0.2" />
+      <stop offset="1" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="well-shade-right" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0.12" />
+      <stop offset="1" style="stop-color: oklch(0.18 0.03 45)" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="well-light-bottom" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" style="stop-color: var(--cream-slip)" stop-opacity="0.1" />
+      <stop offset="1" style="stop-color: var(--cream-slip)" stop-opacity="0" />
+    </linearGradient>
     <filter id="piece-grain" x="-5%" y="-5%" width="110%" height="110%">
       <feTurbulence type="fractalNoise" baseFrequency="8" numOctaves="2" result="noise" />
       <feColorMatrix
@@ -173,30 +189,38 @@
     y="0"
     width={SIDE}
     height={SIDE}
-    fill="var(--terracotta)"
+    fill="var(--clay-well)"
     filter="url(#board-grain)"
   />
-  <g class="grid" class:visible={game.dragging != null} stroke="var(--ink)" stroke-width="0.02">
+  <rect x="0" y="0" width={SIDE} height="0.6" fill="url(#well-shade-top)" />
+  <rect x="0" y="0" width="0.45" height={SIDE} fill="url(#well-shade-left)" />
+  <rect x={SIDE - 0.45} y="0" width="0.45" height={SIDE} fill="url(#well-shade-right)" />
+  <rect x="0" y={SIDE - 0.3} width={SIDE} height="0.3" fill="url(#well-light-bottom)" />
+  <g class="grid" class:visible={game.dragging != null} stroke="var(--cream-slip)" stroke-width="0.02">
     {#each gridLines as i (i)}
       <line x1={i} y1="0" x2={i} y2={SIDE} />
       <line x1="0" y1={i} x2={SIDE} y2={i} />
     {/each}
   </g>
-  <rect
-    x="0.06"
-    y="0.06"
-    width={SIDE - 0.12}
-    height={SIDE - 0.12}
-    fill="none"
-    stroke="var(--ink)"
-    stroke-width="0.12"
-  />
-
   <g class="pieces" class:won={game.win != null}>
     {#each drawOrder as i (i)}
       <Piece index={i} freeAngle={game.selected === i ? freeAngle : 0} />
     {/each}
   </g>
+
+  <!-- Rim drawn above the pieces, centered on the exact board bounds: its lip
+       covers the half of each piece's centered outline stroke that would
+       otherwise poke past the well edge on flush placements -->
+  <rect
+    x="0"
+    y="0"
+    width={SIDE}
+    height={SIDE}
+    fill="none"
+    stroke="var(--ink)"
+    stroke-width="0.22"
+    pointer-events="none"
+  />
 
   {#if ghost}
     <path class="ghost" d={ghost} />
@@ -226,6 +250,13 @@
       <path
         d={`M${kx - 0.28},${ky - 0.12} A0.32,0.32 0 1 1 ${kx - 0.12},${ky + 0.28}`}
         class="knob-arrow"
+      />
+      <line
+        x1={kx}
+        y1={above ? ky + 0.5 : ky - 0.5}
+        x2={selCenter[0]}
+        y2={above ? selBBox.minY : selBBox.maxY}
+        class="tether-casing"
       />
       <line
         x1={kx}
@@ -347,6 +378,14 @@
 
   .flip-icon {
     fill: var(--ink);
+    pointer-events: none;
+  }
+
+  .tether-casing {
+    stroke: var(--cream-slip);
+    stroke-width: 0.09;
+    stroke-dasharray: 0.12 0.12;
+    opacity: 0.55;
     pointer-events: none;
   }
 

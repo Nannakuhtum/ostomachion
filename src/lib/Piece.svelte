@@ -10,7 +10,7 @@
     'var(--cream-slip)',
     'var(--ochre)',
     'var(--terracotta-deep)',
-    'var(--umber)',
+    'var(--terracotta)',
   ];
 
   const base = PIECES[index].vertices;
