@@ -68,3 +68,9 @@ button {
   margin: 0 0 1rem;
   font-size: var(--text-base);
 }
+
+.about a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
