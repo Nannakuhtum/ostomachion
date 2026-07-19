@@ -2,7 +2,7 @@
   import { Spring } from 'svelte/motion';
   import { PIECES } from '../core/construction';
   import { ringCenter } from '../core/geometry';
-  import { game } from './game.svelte';
+  import { game, pendingSpin } from './game.svelte';
 
   let { index, freeAngle = 0 }: { index: number; freeAngle?: number } = $props();
 
@@ -31,6 +31,7 @@
     const first = prevRot === null;
     const rotChanged = !first && p.rot !== prevRot;
     const flipChanged = !first && p.flipped !== prevFlipped;
+    const pending = pendingSpin.get(index);
     if (first || reduced) {
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
     } else if (flipChanged) {
@@ -40,16 +41,22 @@
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
       flipS.set(-1, { instant: true });
       flipS.target = 1;
-    } else if (rotChanged) {
-      // Center-pivot spin: pose lands instantly, the outer group unwinds
-      // the quarter-turn delta about the piece's world center.
+    } else if (rotChanged || pending !== undefined) {
+      // Center-pivot spin about the piece's world center. With a knob
+      // release, start from the residual of the user's own rotation so the
+      // settle continues from where they let go, in their direction;
+      // otherwise (R key, wheel) unwind the shortest quarter-turn delta.
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
-      const dq = ((((prevRot! - p.rot + 2) % 4) + 4) % 4) - 2; // shortest quarter path
-      spin.set(spin.current + dq * 90, { instant: true });
+      const start =
+        pending !== undefined
+          ? pending
+          : (((((prevRot! - p.rot + 2) % 4) + 4) % 4) - 2) * 90;
+      spin.set(start, { instant: true });
       spin.target = 0;
     } else {
       pos.target = { x: p.tx, y: p.ty };
     }
+    pendingSpin.delete(index);
     prevRot = p.rot;
     prevFlipped = p.flipped;
   });

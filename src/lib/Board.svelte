@@ -3,7 +3,7 @@
   import type { Vec } from '../core/construction';
   import { ringBBox, ringCenter, rotateRingQuarterAbout } from '../core/geometry';
   import Piece from './Piece.svelte';
-  import { game, WORLD } from './game.svelte';
+  import { game, pendingSpin, WORLD } from './game.svelte';
 
   let svgEl: SVGSVGElement;
 
@@ -68,6 +68,7 @@
       game.settle(i);
     } else if (mode === 'rotate' && game.selected != null) {
       const quarters = Math.round(freeAngle / 90);
+      pendingSpin.set(game.selected, freeAngle - quarters * 90);
       let target = game.ringOf(game.selected);
       const c = ringCenter(target);
       const steps = ((quarters % 4) + 4) % 4;

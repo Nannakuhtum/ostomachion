@@ -19,6 +19,15 @@ export const WORLD = { x: -0.75, y: -0.5, w: 13.5, h: 19.5 };
 
 export type WinKind = 'new' | 'repeat';
 
+/**
+ * One-shot spin continuity handoff: on knob release, Board records the
+ * residual angle (release angle minus the committed quarter turns) so the
+ * piece's settle animation starts exactly where the user let go and travels
+ * in the direction they were rotating. Keyed by piece index; consumed by
+ * Piece on the next pose effect.
+ */
+export const pendingSpin = new Map<number, number>();
+
 /** Deterministic scatter: loose grid of slots below the board, seeded jitter. */
 function mulberry32(seed: number) {
   let a = seed >>> 0;
