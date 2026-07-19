@@ -1,0 +1,34 @@
+/* Design tokens — source of truth: DESIGN.md */
+
+:root {
+  /* Palette (OKLCH pottery roles) */
+  --stone: oklch(0.94 0.012 80);
+  --ink: oklch(0.26 0.02 50);
+  --terracotta: oklch(0.64 0.13 45);
+  --terracotta-deep: oklch(0.5 0.13 40);
+  --cream-slip: oklch(0.9 0.035 85);
+  --ochre: oklch(0.72 0.11 75);
+  --umber: oklch(0.42 0.06 55);
+  --laurel: oklch(0.55 0.06 130);
+
+  /* Typography */
+  --font-display: 'Marcellus', 'Iowan Old Style', 'Palatino Linotype', serif;
+  --font-body: 'Alegreya Sans', 'Gill Sans', 'Segoe UI', sans-serif;
+
+  /* Type scale, ratio 1.25 */
+  --text-sm: 0.8rem;
+  --text-base: 1rem;
+  --text-md: 1.25rem;
+  --text-lg: 1.563rem;
+  --text-xl: 1.953rem;
+  --text-2xl: 2.441rem;
+
+  /* Marcellus ships a single weight: display hierarchy comes
+     from size and letter-spacing, never font-weight */
+  --tracking-display: 0.04em;
+
+  /* Motion */
+  --duration-snap: 150ms;
+  --duration-ui: 200ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
