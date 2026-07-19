@@ -21,29 +21,37 @@
 
   const pos = new Spring({ x: 0, y: 0 }, { stiffness: 0.2, damping: 0.8 });
   const spin = new Spring(0, { stiffness: 0.16, damping: 0.72 });
+  const flipS = new Spring(1, { stiffness: 0.18, damping: 0.9 });
 
   let prevRot: number | null = null;
+  let prevFlipped: boolean | null = null;
 
   $effect(() => {
     const p = game.placements[index];
-    if (prevRot === null) {
+    const first = prevRot === null;
+    const rotChanged = !first && p.rot !== prevRot;
+    const flipChanged = !first && p.flipped !== prevFlipped;
+    if (first || reduced) {
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
-      prevRot = p.rot;
-      return;
-    }
-    if (reduced) {
+    } else if (flipChanged) {
+      // The new rendering mirrored about the piece's vertical center axis IS
+      // the old visual, so a scale sweep -1 → 1 about the center covers the
+      // whole change (including any rot/translation the pose solver folded in).
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
+      flipS.set(-1, { instant: true });
+      flipS.target = 1;
+    } else if (rotChanged) {
+      // Center-pivot spin: pose lands instantly, the outer group unwinds
+      // the quarter-turn delta about the piece's world center.
+      pos.set({ x: p.tx, y: p.ty }, { instant: true });
+      const dq = ((((prevRot! - p.rot + 2) % 4) + 4) % 4) - 2; // shortest quarter path
+      spin.set(spin.current + dq * 90, { instant: true });
+      spin.target = 0;
     } else {
       pos.target = { x: p.tx, y: p.ty };
     }
-    if (p.rot !== prevRot) {
-      const dq = ((((prevRot - p.rot + 2) % 4) + 4) % 4) - 2; // shortest quarter path
-      if (!reduced) {
-        spin.set(spin.current + dq * 90, { instant: true });
-        spin.target = 0;
-      }
-      prevRot = p.rot;
-    }
+    prevRot = p.rot;
+    prevFlipped = p.flipped;
   });
 
   const pose = $derived(game.placements[index]);
@@ -52,7 +60,9 @@
   const lifted = $derived(game.dragging === index);
 </script>
 
-<g transform={freeAngle ? `rotate(${freeAngle} ${center[0]} ${center[1]})` : undefined}>
+<g
+  transform={`rotate(${freeAngle + spin.current} ${center[0]} ${center[1]}) translate(${center[0]} 0) scale(${flipS.current} 1) translate(${-center[0]} 0)`}
+>
   <path
     {d}
     data-index={index}
@@ -62,7 +72,7 @@
     class:selected
     class:lifted
     fill={FILLS[index % FILLS.length]}
-    transform={`translate(${pos.current.x} ${pos.current.y}) rotate(${pose.rot * 90 + spin.current}) ${
+    transform={`translate(${pos.current.x} ${pos.current.y}) rotate(${pose.rot * 90}) ${
       pose.flipped ? 'scale(-1 1)' : ''
     }`}
     onfocus={() => game.select(index)}
