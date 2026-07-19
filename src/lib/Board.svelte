@@ -261,8 +261,8 @@
 <style>
   svg {
     display: block;
-    width: min(94vw, calc(64vh * 18 / 21), 40rem);
-    aspect-ratio: 18 / 21;
+    width: min(96vw, calc(66vh * 13.5 / 19.5), 44rem);
+    aspect-ratio: 13.5 / 19.5;
     touch-action: none;
     user-select: none;
   }

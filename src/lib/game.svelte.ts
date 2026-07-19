@@ -14,8 +14,8 @@ import { signature } from '../core/canonical';
 import { SQUARE } from '../core/targets';
 import { loadLayout, loadSolutions, recordSolution, saveLayout } from './persist';
 
-/** World extents: board at 0..12, scatter margin around and below. */
-export const WORLD = { x: -3, y: -0.5, w: 18, h: 21 };
+/** World extents: board at 0..12 with slim side padding, scatter zone below. */
+export const WORLD = { x: -0.75, y: -0.5, w: 13.5, h: 19.5 };
 
 export type WinKind = 'new' | 'repeat';
 
@@ -50,7 +50,7 @@ export function scatterLayout(seed = 7): Pose[] {
     }
     const [cx, cy] = ringCenter(posed);
     const slotX = WORLD.x + 0.5 + (col + 0.5) * slotW + (rand() - 0.5) * 1.2;
-    const slotY = SIDE + 2 + row * 2.9 + (rand() - 0.5) * 0.8;
+    const slotY = SIDE + 1.8 + row * 2.5 + (rand() - 0.5) * 0.8;
     let tx = slotX - cx;
     let ty = slotY - cy;
     // Keep off the board and inside the world.
