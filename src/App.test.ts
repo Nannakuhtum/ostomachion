@@ -35,14 +35,16 @@ describe('App', () => {
     expect(panel.getAttribute('aria-labelledby')).toBe('tab-figures');
 
     await fireEvent.click(screen.getByRole('tab', { name: 'Collection' }));
-    expect(screen.getByText('Every solution you find, kept. Coming soon.')).toBeTruthy();
+    expect(screen.getByText(/of 536 solutions found/)).toBeTruthy();
     expect(screen.getByRole('tabpanel').getAttribute('aria-labelledby')).toBe('tab-collection');
   });
 
-  it('renders the board inside the tabpanel', () => {
+  it('renders the game world inside the tabpanel', () => {
     render(App);
     const panel = screen.getByRole('tabpanel');
-    expect(panel.querySelector('svg')?.getAttribute('viewBox')).toBe('0 0 12 12');
+    const viewBox = panel.querySelector('svg')?.getAttribute('viewBox');
+    expect(viewBox).toBeTruthy();
+    expect(panel.querySelectorAll('[data-index]')).toHaveLength(14);
   });
 
   it('shows the footer attribution', () => {
