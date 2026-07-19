@@ -28,5 +28,5 @@
 
 - [x] 5.1 Add `.github/workflows/deploy.yml`: on push to main → npm ci, `npm run check`, `npm run build`, upload `dist/`, deploy via `actions/deploy-pages` (mirror align3's workflow shape)
 - [x] 5.2 Verify `npm run build` output references `/ostomachion/` paths and `npm run preview` works
-- [ ] 5.3 Initial commit + push to main; switch repo Pages settings to GitHub Actions source (one-time manual step)
-- [ ] 5.4 Confirm site live at `https://games.aakkagam.com/ostomachion/` with correct fonts, palette, and metadata
+- [x] 5.3 Initial commit + push to main; switch repo Pages settings to GitHub Actions source (one-time manual step)
+- [x] 5.4 Confirm site live at `https://games.aakkagam.com/ostomachion/` with correct fonts, palette, and metadata
