@@ -3,18 +3,11 @@
   import { PIECES } from '../core/construction';
   import { ringCenter } from '../core/geometry';
   import { game, pendingSpin } from './game.svelte';
+  import { FILLS } from './fills';
 
   let { index, freeAngle = 0 }: { index: number; freeAngle?: number } = $props();
 
-  const FILLS = [
-    'var(--cream-slip)',
-    'var(--ochre)',
-    'var(--terracotta-deep)',
-    'var(--terracotta)',
-  ];
-
-  const base = PIECES[index].vertices;
-  const d = 'M' + base.map(([x, y]) => `${x},${y}`).join('L') + 'Z';
+  const d = $derived('M' + PIECES[index].vertices.map(([x, y]) => `${x},${y}`).join('L') + 'Z');
 
   const reduced =
     typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;

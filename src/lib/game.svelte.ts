@@ -83,6 +83,8 @@ class Game {
   solutionCount = $state(loadSolutions().length);
 
   constructor() {
+    // A restored layout may have drifted out of the world (older builds allowed it).
+    this.placements = this.placements.map((p, i) => this.clamped(p, i));
     // A restored layout may already be solved; reflect it (quietly, as a repeat).
     if (isWin(this.placements, SQUARE)) {
       this.win = { kind: 'repeat', total: this.solutionCount };
@@ -97,10 +99,23 @@ class Game {
     this.selected = i;
   }
 
+  /** Keep the piece's bounds inside the world so it can always be grabbed again. */
+  private clamped(pose: Pose, i: number): Pose {
+    const b = ringBBox(transformRing(PIECES[i].vertices, pose));
+    const m = 0.2;
+    let dx = 0;
+    let dy = 0;
+    if (b.minX < WORLD.x + m) dx = WORLD.x + m - b.minX;
+    else if (b.maxX > WORLD.x + WORLD.w - m) dx = WORLD.x + WORLD.w - m - b.maxX;
+    if (b.minY < WORLD.y + m) dy = WORLD.y + m - b.minY;
+    else if (b.maxY > WORLD.y + WORLD.h - m) dy = WORLD.y + WORLD.h - m - b.maxY;
+    return dx || dy ? { ...pose, tx: pose.tx + dx, ty: pose.ty + dy } : pose;
+  }
+
   /** Translate during drag (visual layer springs after this). */
   moveBy(i: number, dx: number, dy: number) {
     const p = this.placements[i];
-    this.placements[i] = { ...p, tx: p.tx + dx, ty: p.ty + dy };
+    this.placements[i] = this.clamped({ ...p, tx: p.tx + dx, ty: p.ty + dy }, i);
   }
 
   /** Snap near the board: integer translation when the piece touches the board neighborhood. */
@@ -113,7 +128,7 @@ class Game {
 
   /** Commit the current (possibly fractional) pose at drag end. */
   settle(i: number) {
-    this.placements[i] = this.snapped(this.placements[i], i);
+    this.placements[i] = this.clamped(this.snapped(this.placements[i], i), i);
     this.afterSettle();
   }
 
@@ -121,7 +136,7 @@ class Game {
   commitRing(i: number, target: Ring) {
     const pose = poseForRing(PIECES[i].vertices, target);
     if (!pose) return;
-    this.placements[i] = this.snapped(pose, i);
+    this.placements[i] = this.clamped(this.snapped(pose, i), i);
     this.afterSettle();
   }
 

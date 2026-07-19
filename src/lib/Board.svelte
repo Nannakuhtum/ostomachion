@@ -35,6 +35,8 @@
       last = toWorld(evt);
       svgEl.setPointerCapture(evt.pointerId);
       evt.preventDefault();
+    } else if (!target.closest('.affordance')) {
+      game.select(null);
     }
   }
 
@@ -58,10 +60,7 @@
     }
   }
 
-  let suppressClick = false;
-
   function onPointerUp() {
-    if (mode !== 'idle') suppressClick = true;
     if (mode === 'drag' && game.dragging != null) {
       const i = game.dragging;
       game.dragging = null;
@@ -93,19 +92,13 @@
     if (evt.key === 'f' || evt.key === 'F') game.flip(game.selected);
   }
 
-  function onBackgroundClick(evt: MouseEvent) {
-    if (suppressClick) {
-      suppressClick = false;
-      return;
-    }
-    if (!(evt.target as Element).closest('[data-index], .affordance')) game.select(null);
-  }
-
   const drawOrder = $derived(
     [...game.placements.keys()].sort((a, b) =>
       a === game.dragging ? 1 : b === game.dragging ? -1 : a === game.selected ? 1 : b === game.selected ? -1 : 0
     )
   );
+  const restPieces = $derived(drawOrder.filter((i) => i !== game.selected && i !== game.dragging));
+  const activePieces = $derived(drawOrder.filter((i) => i === game.selected || i === game.dragging));
 
   const selBBox = $derived(game.selected != null ? ringBBox(game.ringOf(game.selected)) : null);
   const selCenter = $derived(selBBox ? [(selBBox.minX + selBBox.maxX) / 2, (selBBox.minY + selBBox.maxY) / 2] : null);
@@ -124,7 +117,7 @@
 
 <svelte:window onkeydown={onKey} />
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <svg
   bind:this={svgEl}
   viewBox={`${WORLD.x} ${WORLD.y} ${WORLD.w} ${WORLD.h}`}
@@ -135,7 +128,6 @@
   onpointerup={onPointerUp}
   onpointercancel={onPointerUp}
   onwheel={onWheel}
-  onclick={onBackgroundClick}
 >
   <defs>
     <filter id="board-grain" x="0%" y="0%" width="100%" height="100%">
@@ -203,14 +195,16 @@
     {/each}
   </g>
   <g class="pieces" class:won={game.win != null}>
-    {#each drawOrder as i (i)}
-      <Piece index={i} freeAngle={game.selected === i ? freeAngle : 0} />
+    {#each restPieces as i (i)}
+      <Piece index={i} freeAngle={0} />
     {/each}
   </g>
 
-  <!-- Rim drawn above the pieces, centered on the exact board bounds: its lip
-       covers the half of each piece's centered outline stroke that would
-       otherwise poke past the well edge on flush placements -->
+  <!-- Rim drawn above the settled pieces, centered on the exact board bounds:
+       its lip covers the half of each piece's centered outline stroke that
+       would otherwise poke past the well edge on flush placements. The active
+       (selected or dragged) piece renders above the rim so the border never
+       cuts across a piece in hand. -->
   <rect
     x="0"
     y="0"
@@ -221,6 +215,12 @@
     stroke-width="0.22"
     pointer-events="none"
   />
+
+  <g class="pieces" class:won={game.win != null}>
+    {#each activePieces as i (i)}
+      <Piece index={i} freeAngle={game.selected === i ? freeAngle : 0} />
+    {/each}
+  </g>
 
   {#if ghost}
     <path class="ghost" d={ghost} />

@@ -28,7 +28,7 @@ Piece coloring: pieces draw from the cream/ochre/terracotta family (all ≥0.5 l
 
 ## Typography
 
-- **Display**: Marcellus (Trajan-inscription flavor without kitsch). Mode tabs, headings, win moments. Letter-spaced slightly, never all-caps shouting.
+- **Display**: Marcellus (Trajan-inscription flavor without kitsch). Headings and win moments. Letter-spaced slightly, never all-caps shouting.
 - **Body/UI**: Alegreya Sans. Labels, counters, settings.
 - Scale ratio ≥ 1.25 between steps; hierarchy via size + weight, not color.
 - Numerals (solution counter "12 / 536") use tabular figures.
@@ -36,7 +36,7 @@ Piece coloring: pieces draw from the cream/ochre/terracotta family (all ≥0.5 l
 
 ## Layout
 
-- One screen. Board is the protagonist: centered, max practical size, square aspect. Mode tabs (Classic / Figures / Collection) in a quiet header; settings tucked in a corner.
+- One screen. Board is the protagonist: centered, max practical size, square aspect. Header holds only the title; the collection counter sits inside the play panel, top-left of the board. No tabs.
 - Unplaced pieces live in an irregular scatter zone around/below the board, not a neat tray grid; the scatter is part of the artifact feel.
 - No cards. Collection gallery is a plain grid of mini-SVG solutions on the stone ground, separated by spacing alone.
 - Spacing rhythm varies: generous around the board, tight within controls.
@@ -47,7 +47,7 @@ Piece coloring: pieces draw from the cream/ochre/terracotta family (all ≥0.5 l
 - **Piece**: SVG polygon, ceramic fill + grain, ink outline (1.5px), soft drop shadow that grows while dragged (lifted off the surface).
 - **Rotation knob**: small circular handle offset outside the selected piece; drag to free-rotate, ghost preview of snap orientation at ~30% opacity.
 - **Flip control**: labeled button near the knob. Both affordances visible on selection, no hidden gestures.
-- **Mode tabs**: text-only, Marcellus, ink; active tab underlined in terracotta.
+- **Collection counter**: the "n / 536" in laurel, tabular numerals, at the top-left of the play panel, is both status and door: activating it swaps the board for the gallery inline, and the same spot in the gallery reads "← Board" to return. No modal.
 - **Win state**: pieces settle flush (outlines briefly unify to one ink stroke), then a restrained burst; laurel-colored confirmation. In Collection, the new solution tile draws itself into the gallery.
 
 ## Motion

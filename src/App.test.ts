@@ -4,7 +4,8 @@ import App from './App.svelte';
 import { ui } from './lib/state.svelte';
 
 beforeEach(() => {
-  ui.mode = 'classic';
+  ui.view = 'play';
+  localStorage.clear();
 });
 
 describe('App', () => {
@@ -14,37 +15,33 @@ describe('App', () => {
     expect(heading.textContent?.trim()).toBe('Ostomachion');
   });
 
-  it('wires the tabpanel to the active tab', () => {
-    render(App);
-    const panel = screen.getByRole('tabpanel');
-    expect(panel.id).toBe('panel-classic');
-    expect(panel.getAttribute('aria-labelledby')).toBe('tab-classic');
-  });
-
   it('shows the classic caption by default', () => {
     render(App);
     expect(screen.getByText('Tile the square with all fourteen pieces.')).toBeTruthy();
   });
 
-  it('updates the caption and panel wiring when the mode changes', async () => {
+  it('shows the collection counter as the corner control', () => {
     render(App);
-    await fireEvent.click(screen.getByRole('tab', { name: 'Figures' }));
-    expect(screen.getByText('Tile a figure from history. Coming soon.')).toBeTruthy();
-    const panel = screen.getByRole('tabpanel');
-    expect(panel.id).toBe('panel-figures');
-    expect(panel.getAttribute('aria-labelledby')).toBe('tab-figures');
-
-    await fireEvent.click(screen.getByRole('tab', { name: 'Collection' }));
-    expect(screen.getByText(/of 536 solutions found/)).toBeTruthy();
-    expect(screen.getByRole('tabpanel').getAttribute('aria-labelledby')).toBe('tab-collection');
+    const counter = screen.getByRole('button', { name: /Collection: \d+ of 536/ });
+    expect(counter.textContent).toContain('536');
   });
 
-  it('renders the game world inside the tabpanel', () => {
+  it('opens the collection from the counter and returns via the corner control', async () => {
     render(App);
-    const panel = screen.getByRole('tabpanel');
-    const viewBox = panel.querySelector('svg')?.getAttribute('viewBox');
-    expect(viewBox).toBeTruthy();
-    expect(panel.querySelectorAll('[data-index]')).toHaveLength(14);
+    await fireEvent.click(screen.getByRole('button', { name: /Collection: \d+ of 536/ }));
+    expect(screen.getByRole('heading', { level: 2 }).textContent).toMatch(/of 536 solutions/);
+    expect(screen.getByText('Solve the square to begin your collection.')).toBeTruthy();
+    expect(document.querySelector('[data-index]')).toBeNull();
+
+    await fireEvent.click(screen.getByRole('button', { name: /Board/ }));
+    expect(screen.getByText('Tile the square with all fourteen pieces.')).toBeTruthy();
+  });
+
+  it('renders the game world with all fourteen pieces', () => {
+    render(App);
+    const world = document.querySelector('svg[role="application"]');
+    expect(world?.getAttribute('viewBox')).toBeTruthy();
+    expect(document.querySelectorAll('[data-index]')).toHaveLength(14);
   });
 
   it('shows the footer attribution', () => {

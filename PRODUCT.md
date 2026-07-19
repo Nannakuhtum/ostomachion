@@ -6,11 +6,11 @@ product
 
 ## Users
 
-Casual browser players on desktop and mobile, arriving from games.aakkagam.com. They play in short contemplative sessions (a commute, a coffee break, a late evening). No accounts, no installs. Some come for the history (Archimedes' Stomachion), most for a genuinely hard spatial puzzle. The job to be done: manipulate 14 pieces with precision and satisfaction until the square (or a figure) is tiled.
+Casual browser players on desktop and mobile, arriving from games.aakkagam.com. They play in short contemplative sessions (a commute, a coffee break, a late evening). No accounts, no installs. Some come for the history (Archimedes' Stomachion), most for a genuinely hard spatial puzzle. The job to be done: manipulate 14 pieces with precision and satisfaction until the square is tiled.
 
 ## Product Purpose
 
-A single-player implementation of the Ostomachion, the ancient Greek 14-piece dissection puzzle attributed to Archimedes. Three modes on one screen: Classic (tile the 12×12 square), Figures (tile historical silhouettes: elephant, ship, sword, tower), Collection (a gallery of distinct solutions found, counted up to board symmetry toward the known 536). Success: a player loses an hour without noticing, wins once, and comes back to grow their collection.
+A single-player implementation of the Ostomachion, the ancient Greek 14-piece dissection puzzle attributed to Archimedes. One game on one screen: tile the 12×12 square. A Collection (the gallery of distinct solutions found, counted up to board symmetry toward the known 536) opens from a quiet counter sitting above the board; there are no tabs and no other modes. Success: a player loses an hour without noticing, wins once, and comes back to grow their collection.
 
 ## Brand Personality
 

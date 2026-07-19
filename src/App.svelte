@@ -1,13 +1,10 @@
 <script lang="ts">
-  import ModeTabs from './lib/ModeTabs.svelte';
   import Board from './lib/Board.svelte';
+  import Collection from './lib/Collection.svelte';
   import { ui } from './lib/state.svelte';
   import { game } from './lib/game.svelte';
 
   const caption = $derived.by(() => {
-    if (ui.mode === 'figures') return 'Tile a figure from history. Coming soon.';
-    if (ui.mode === 'collection')
-      return `${game.solutionCount} of 536 solutions found. Gallery coming soon.`;
     if (game.win)
       return game.win.kind === 'new'
         ? `Solved: ${game.win.total} of 536 found.`
@@ -19,19 +16,30 @@
 <div class="page">
   <header>
     <h1>Ostomachion</h1>
-    <ModeTabs />
   </header>
 
   <main>
-    <div id="panel-{ui.mode}" class="panel" role="tabpanel" aria-labelledby="tab-{ui.mode}">
-      <Board />
-      <p class="caption" class:laurel={game.win != null && ui.mode === 'classic'} aria-live="polite">
-        {caption}
-      </p>
-      {#if ui.mode === 'classic'}
+    {#if ui.view === 'play'}
+      <div class="panel">
+        <button
+          class="corner"
+          onclick={() => (ui.view = 'collection')}
+          aria-label={`Collection: ${game.solutionCount} of 536 solutions found`}
+        >
+          {game.solutionCount}&hairsp;/&hairsp;536
+        </button>
+        <Board />
+        <p class="caption" class:laurel={game.win != null} aria-live="polite">
+          {caption}
+        </p>
         <button class="scatter" onclick={() => game.reset()}>Scatter anew</button>
-      {/if}
-    </div>
+      </div>
+    {:else}
+      <div class="panel">
+        <button class="corner" onclick={() => (ui.view = 'play')}>&larr; Board</button>
+        <Collection />
+      </div>
+    {/if}
   </main>
 
   <footer>
@@ -49,18 +57,45 @@
     gap: 1.75rem;
   }
 
-  header {
-    display: grid;
-    justify-items: center;
-    gap: 1.25rem;
-  }
-
   h1 {
     margin: 0;
     font-family: var(--font-display);
     font-weight: 400;
     font-size: var(--text-2xl);
     letter-spacing: var(--tracking-display);
+  }
+
+  .corner {
+    justify-self: start;
+    white-space: nowrap;
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0.25rem 0.4rem;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    font-variant-numeric: tabular-nums;
+    color: var(--laurel);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color var(--duration-ui) var(--ease-out-expo);
+  }
+
+  .corner:hover,
+  .corner:focus-visible {
+    text-decoration-color: var(--laurel);
+  }
+
+  @media (max-width: 32rem) {
+    h1 {
+      font-size: var(--text-xl);
+    }
+
+    .corner {
+      font-size: var(--text-sm);
+    }
   }
 
   main {

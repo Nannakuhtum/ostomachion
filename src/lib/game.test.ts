@@ -127,17 +127,17 @@ describe('winning', () => {
 
   it('acknowledges a repeat solution without storing a duplicate', () => {
     game.placements = referenceSolution();
-    game.moveBy(3, 0, 16);
+    game.moveBy(3, 0, 5);
     game.settle(3); // nudge away: no longer a win
     expect(game.win).toBeNull();
-    game.moveBy(3, 0, -16);
+    game.moveBy(3, 0, -5);
     game.settle(3); // first completion
     expect(game.win).toEqual({ kind: 'new', total: 1 });
 
-    game.moveBy(3, 0, 16);
+    game.moveBy(3, 0, 5);
     game.settle(3);
     expect(game.win).toBeNull();
-    game.moveBy(3, 0, -16);
+    game.moveBy(3, 0, -5);
     game.settle(3); // same tiling again
 
     expect(game.win).toEqual({ kind: 'repeat', total: 1 });
@@ -191,6 +191,34 @@ describe('layout persistence through the game', () => {
     const raw = JSON.parse(localStorage.getItem(LAYOUT_KEY)!);
     expect(raw.v).toBe(1);
     expect(raw.layout).toHaveLength(14);
+  });
+});
+
+describe('world clamping', () => {
+  it('moveBy cannot push a piece out of the world', () => {
+    game.moveBy(0, -100, 0);
+    expect(ringBBox(game.ringOf(0)).minX).toBeGreaterThanOrEqual(WORLD.x);
+
+    game.moveBy(0, 200, 200);
+    const b = ringBBox(game.ringOf(0));
+    expect(b.maxX).toBeLessThanOrEqual(WORLD.x + WORLD.w);
+    expect(b.maxY).toBeLessThanOrEqual(WORLD.y + WORLD.h);
+  });
+
+  it('settle pulls an out-of-world pose back inside', () => {
+    game.placements[0] = { flipped: false, rot: 0, tx: 40, ty: -30 };
+    game.settle(0);
+    const b = ringBBox(game.ringOf(0));
+    expect(b.minX).toBeGreaterThanOrEqual(WORLD.x);
+    expect(b.maxX).toBeLessThanOrEqual(WORLD.x + WORLD.w);
+    expect(b.minY).toBeGreaterThanOrEqual(WORLD.y);
+    expect(b.maxY).toBeLessThanOrEqual(WORLD.y + WORLD.h);
+  });
+
+  it('clamping never disturbs an on-board snap', () => {
+    game.placements[0] = { flipped: false, rot: 0, tx: 3.3, ty: 2.2 };
+    game.settle(0);
+    expect(game.placements[0]).toEqual({ flipped: false, rot: 0, tx: 3, ty: 2 });
   });
 });
 
