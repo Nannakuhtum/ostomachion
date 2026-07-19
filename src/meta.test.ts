@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const html = readFileSync(resolve(__dirname, '../index.html'), 'utf-8');
+const html = readFileSync(resolve(process.cwd(), 'index.html'), 'utf-8');
 const doc = new DOMParser().parseFromString(html, 'text/html');
 
 const meta = (selector: string) =>
