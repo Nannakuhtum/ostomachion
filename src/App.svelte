@@ -45,7 +45,8 @@
   <footer>
     <p>
       After the puzzle of Archimedes, c. 250 BC. &middot;
-      <a href="https://games.aakkagam.com/">Aakkagam Games</a>
+      <a href="https://games.aakkagam.com/">Aakkagam Games</a> &middot;
+      <a href="mailto:admin@aakkagam.com?subject=Feedback%20from%20ostomachion">Feedback</a>
     </p>
   </footer>
 </div>
