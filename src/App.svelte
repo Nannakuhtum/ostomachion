@@ -43,7 +43,10 @@
   </main>
 
   <footer>
-    <p>After the puzzle of Archimedes, c. 250 BC.</p>
+    <p>
+      After the puzzle of Archimedes, c. 250 BC. &middot;
+      <a href="https://games.aakkagam.com/">Aakkagam Games</a>
+    </p>
   </footer>
 </div>
 
@@ -136,5 +139,16 @@
     margin: 0;
     font-size: var(--text-sm);
     color: var(--umber);
+  }
+
+  footer a {
+    color: inherit;
+    text-underline-offset: 0.2em;
+    transition: color var(--duration-ui) var(--ease-out-expo);
+  }
+
+  footer a:hover,
+  footer a:focus-visible {
+    color: var(--laurel);
   }
 </style>

@@ -44,8 +44,10 @@ describe('App', () => {
     expect(document.querySelectorAll('[data-index]')).toHaveLength(14);
   });
 
-  it('shows the footer attribution', () => {
+  it('shows the footer attribution with a link back to the landing page', () => {
     render(App);
-    expect(screen.getByText('After the puzzle of Archimedes, c. 250 BC.')).toBeTruthy();
+    expect(screen.getByText(/After the puzzle of Archimedes, c\. 250 BC\./)).toBeTruthy();
+    const home = screen.getByRole('link', { name: 'Aakkagam Games' });
+    expect(home.getAttribute('href')).toBe('https://games.aakkagam.com/');
   });
 });
