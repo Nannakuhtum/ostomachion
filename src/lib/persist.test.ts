@@ -26,11 +26,11 @@ describe('layout persistence', () => {
     expect(loadLayout()).toEqual(layout);
   });
 
-  it('stores the layout under a versioned v:1 envelope', () => {
+  it('stores the layout under a versioned v:2 envelope', () => {
     const layout = layout14();
     saveLayout(layout);
     const raw = JSON.parse(localStorage.getItem(LAYOUT_KEY)!);
-    expect(raw.v).toBe(1);
+    expect(raw.v).toBe(2);
     expect(raw.layout).toEqual(layout);
   });
 
@@ -44,12 +44,17 @@ describe('layout persistence', () => {
   });
 
   it('returns null for a layout with the wrong length', () => {
-    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ v: 1, layout: layout14().slice(0, 5) }));
+    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ v: 2, layout: layout14().slice(0, 5) }));
+    expect(loadLayout()).toBeNull();
+  });
+
+  it('returns null for a stale v:1 (full-size scatter) layout', () => {
+    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ v: 1, layout: layout14() }));
     expect(loadLayout()).toBeNull();
   });
 
   it('returns null for an unknown envelope version', () => {
-    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ v: 2, layout: layout14() }));
+    localStorage.setItem(LAYOUT_KEY, JSON.stringify({ v: 3, layout: layout14() }));
     expect(loadLayout()).toBeNull();
   });
 

@@ -9,8 +9,11 @@ export interface StoredSolution {
   foundAt: number;
 }
 
+// v2: pieces carry an optional tray `scale`. A v1 layout was saved by the
+// full-size-scatter build; loading it verbatim would show old, oversized,
+// overlapping tray pieces, so v1 is discarded and a fresh scatter is generated.
 interface LayoutEnvelope {
-  v: 1;
+  v: 2;
   layout: Pose[];
 }
 
@@ -39,11 +42,11 @@ function write(key: string, value: unknown): void {
 
 export function loadLayout(): Pose[] | null {
   const env = read<LayoutEnvelope>(LAYOUT_KEY);
-  return env?.v === 1 && Array.isArray(env.layout) && env.layout.length === 14 ? env.layout : null;
+  return env?.v === 2 && Array.isArray(env.layout) && env.layout.length === 14 ? env.layout : null;
 }
 
 export function saveLayout(layout: readonly Pose[]): void {
-  write(LAYOUT_KEY, { v: 1, layout: [...layout] } satisfies LayoutEnvelope);
+  write(LAYOUT_KEY, { v: 2, layout: [...layout] } satisfies LayoutEnvelope);
 }
 
 export function loadSolutions(): StoredSolution[] {

@@ -195,7 +195,7 @@ describe('layout persistence through the game', () => {
   it('persists under the versioned layout key', () => {
     game.settle(0);
     const raw = JSON.parse(localStorage.getItem(LAYOUT_KEY)!);
-    expect(raw.v).toBe(1);
+    expect(raw.v).toBe(2);
     expect(raw.layout).toHaveLength(14);
   });
 });
