@@ -15,6 +15,7 @@
   const pos = new Spring({ x: 0, y: 0 }, { stiffness: 0.2, damping: 0.8 });
   const spin = new Spring(0, { stiffness: 0.16, damping: 0.72 });
   const flipS = new Spring(1, { stiffness: 0.18, damping: 0.9 });
+  const sizeS = new Spring(1, { stiffness: 0.2, damping: 0.8 });
 
   let prevRot: number | null = null;
   let prevFlipped: boolean | null = null;
@@ -25,6 +26,9 @@
     const rotChanged = !first && p.rot !== prevRot;
     const flipChanged = !first && p.flipped !== prevFlipped;
     const pending = pendingSpin.get(index);
+    const s = p.scale ?? 1;
+    if (first || reduced) sizeS.set(s, { instant: true });
+    else sizeS.target = s;
     if (first || reduced) {
       pos.set({ x: p.tx, y: p.ty }, { instant: true });
     } else if (flipChanged) {
@@ -72,7 +76,7 @@
     class:selected
     class:lifted
     fill={FILLS[index % FILLS.length]}
-    transform={`translate(${pos.current.x} ${pos.current.y}) rotate(${pose.rot * 90}) ${
+    transform={`translate(${pos.current.x} ${pos.current.y}) rotate(${pose.rot * 90}) scale(${sizeS.current}) ${
       pose.flipped ? 'scale(-1 1)' : ''
     }`}
     onfocus={() => game.select(index)}

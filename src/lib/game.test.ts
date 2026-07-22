@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { PIECES, SIDE } from '../core/construction';
 import type { Pose } from '../core/geometry';
-import { IDENTITY_POSE, convexOverlap, ringBBox, transformRing } from '../core/geometry';
-import { WORLD, game, scatterLayout } from './game.svelte';
+import { IDENTITY_POSE, convexOverlap, ringBBox, ringCenter, transformRing } from '../core/geometry';
+import { TRAY_SCALE, WORLD, game, scatterLayout } from './game.svelte';
 import { loadLayout, loadSolutions } from './persist';
 
 const LAYOUT_KEY = 'ostomachion.classic.layout';
@@ -13,7 +13,7 @@ function referenceSolution(): Pose[] {
 }
 
 function plain(poses: readonly Pose[]): Pose[] {
-  return poses.map((p) => ({ flipped: p.flipped, rot: p.rot, tx: p.tx, ty: p.ty }));
+  return poses.map((p) => ({ flipped: p.flipped, rot: p.rot, tx: p.tx, ty: p.ty, scale: p.scale }));
 }
 
 beforeEach(() => {
@@ -60,15 +60,21 @@ describe('settle snapping', () => {
     expect(game.placements[0]).toEqual({ flipped: false, rot: 0, tx: 3, ty: 2 });
   });
 
-  it('leaves a fractional pose untouched when dropped in the scatter zone', () => {
-    const pose: Pose = { flipped: false, rot: 0, tx: 1.4, ty: 14.6 };
+  it('shrinks to tray size in place, without lattice snapping, when dropped in the scatter zone', () => {
+    const pose: Pose = { flipped: false, rot: 0, tx: 1.4, ty: 14.6, scale: 1 };
     game.placements[0] = { ...pose };
+    const before = ringCenter(game.ringOf(0));
     // Premise: even after rounding, the bbox sits fully below board + 1.
     const b = ringBBox(transformRing(PIECES[0].vertices, { ...pose, tx: 1, ty: 15 }));
     expect(b.minY).toBeGreaterThanOrEqual(SIDE + 1);
 
     game.settle(0);
-    expect(game.placements[0]).toEqual(pose);
+    const p = game.placements[0];
+    // Tray scale, position held (grabbable where it was), not snapped to integers.
+    expect(p.scale).toBeCloseTo(TRAY_SCALE);
+    const after = ringCenter(game.ringOf(0));
+    expect(after[0]).toBeCloseTo(before[0]);
+    expect(after[1]).toBeCloseTo(before[1]);
   });
 
   it('preserves rot and flip through a snap', () => {

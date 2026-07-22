@@ -65,6 +65,8 @@
       const i = game.dragging;
       game.dragging = null;
       game.settle(i);
+      // Dropped back in the tray: it has already shrunk, so let it go.
+      if (!game.onBoard(i)) game.select(null);
     } else if (mode === 'rotate' && game.selected != null) {
       const quarters = Math.round(freeAngle / 90);
       pendingSpin.set(game.selected, freeAngle - quarters * 90);
